@@ -66,9 +66,10 @@ class Trainer:
                  early_stopping_limit=0,
                  criterion = nn.CrossEntropyLoss(),
                  save_loc='models/',
-                 name="default"):
+                 name="default",
+                 log_dir=None):
 
-        self.writer = SummaryWriter()
+        self.writer = SummaryWriter(log_dir=None)
         
         # hyper parameters
         self.epoch_limit = epoch_limit
@@ -185,6 +186,8 @@ class Trainer:
         # plot first 256 embedding of the train input
         for x, y in self.trainData:
             labels = list(map(str, y.numpy().ravel()))
+            if torch.cuda.is_available():
+                x = x.cuda()
             output = model(Variable(x).float()).data
             self.writer.add_embedding(x, metadata=labels, tag="input", global_step=0)
             self.writer.add_embedding(output, metadata=labels,

@@ -53,6 +53,13 @@ class Net(nn.Module):
         out = self.fc2(out)
         return out
 
+    def embedding(self, x):
+        res = []
+        res.append(('input', x.data))
+        # extract other features
+        res.append(('fc1', self.relu(self.fc1(x)).data))
+        return res
+
 net = Net()
 if torch.cuda.is_available():
     net.cuda()
@@ -183,15 +190,18 @@ class Trainer:
                 self.writer.add_histogram(tag+'/grad', to_np(value.grad), i)    
 
 
-        # plot first 256 embedding of the train input
+        # plot first batch embedding of the train input
         for x, y in self.trainData:
             labels = list(map(str, y.numpy().ravel()))
             if torch.cuda.is_available():
                 x = x.cuda()
-            output = model(Variable(x).float()).data
-            self.writer.add_embedding(x, metadata=labels, tag="input", global_step=0)
-            self.writer.add_embedding(output, metadata=labels,
-                                      tag="output", global_step=1)
+            for step, (tag, em) in enumerate(model.embedding(Variable(x))):
+                self.writer.add_embedding(em, metadata=labels, tag=tag, global_step=step)
+            
+            # output = model(Variable(x).float()).data
+            # self.writer.add_embedding(x, metadata=labels, tag="input", global_step=0)
+            # self.writer.add_embedding(output, metadata=labels,
+            #                           tag="output", global_step=1)
             break
             
 

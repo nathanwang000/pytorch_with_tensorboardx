@@ -197,11 +197,6 @@ class Trainer:
                 x = x.cuda()
             for step, (tag, em) in enumerate(model.embedding(Variable(x))):
                 self.writer.add_embedding(em, metadata=labels, tag=tag, global_step=step)
-            
-            # output = model(Variable(x).float()).data
-            # self.writer.add_embedding(x, metadata=labels, tag="input", global_step=0)
-            # self.writer.add_embedding(output, metadata=labels,
-            #                           tag="output", global_step=1)
             break
             
 

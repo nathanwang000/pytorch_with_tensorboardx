@@ -21,3 +21,9 @@ following [[https://github.com/yunjey/pytorch-tutorial][pytorch tutorial]]
 
 helloworld.py gives a minimally useful setup for solving problems, it should be
 reused for later projects
+
+basics/visualize_embedding.py: visualize resnet on downloaded images
+
+ffn/main.py: feedforward net on mnist
+
+* TODO ffn/main.py: try different archeitecture on mnist and visualize

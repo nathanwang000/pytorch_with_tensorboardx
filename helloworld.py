@@ -4,6 +4,7 @@ from torch.utils.data import Dataset, DataLoader
 import numpy as np
 from torch.autograd import Variable
 from tensorboardX import SummaryWriter
+from sklearn.externals import joblib
 
 # step 0: utilities
 def to_np(x):
@@ -191,14 +192,13 @@ class Trainer:
 
 
         # plot first batch embedding of the train input
-        for x, y in self.trainData:
-            labels = list(map(str, y.numpy().ravel()))
-            if torch.cuda.is_available():
-                x = x.cuda()
-            for step, (tag, em) in enumerate(model.embedding(Variable(x))):
-                self.writer.add_embedding(em, metadata=labels, tag=tag, global_step=step)
-            break
-            
+        data_iter = iter(self.trainData)
+        x, y = next(data_iter)
+        labels = list(map(str, y.numpy().ravel()))
+        if torch.cuda.is_available():
+            x = x.cuda()
+        for step, (tag, em) in enumerate(model.embedding(Variable(x))):
+            self.writer.add_embedding(em, metadata=labels, tag=tag, global_step=step)
 
     def retrain(self, model, optimizer=None):
 
